@@ -1,4 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'bmi_card.dart';
+import 'icon_content.dart';
+import 'constants.dart';
+
+enum Gender{
+  male,
+  female,
+}
+
+
 
 class InputPage extends StatefulWidget {
   @override
@@ -6,6 +17,11 @@ class InputPage extends StatefulWidget {
 }
 
 class _InputPageState extends State<InputPage> {
+
+  Gender? selectedgender;
+  int height = 180;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,17 +34,35 @@ class _InputPageState extends State<InputPage> {
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [Expanded(
           child: Row(
             children: [
               Expanded(
                 child: BmiCard(
-                  colour: Color(0xFF1D1E33),
+                  onPress: (){
+                    setState(() {
+                      selectedgender = Gender.male;
+                    });
+                  },
+                  colour: selectedgender == Gender.male ? kBmiCardColor : kInactiveBmiCard,
+                  cardChild: IconContent(
+                    iconData: FontAwesomeIcons.mars,
+                    Label: 'MALE',
+                  ),
                 ),
               ),
               Expanded(
                 child: BmiCard(
-                  colour: Color(0xFF1D1E33),
+                  //onPress() is a custom function which we passed as a argument in the BmiCard widget parameter.
+                  onPress: (){
+                    setState(() {
+                      //Gender is enum function
+                      selectedgender = Gender.female;
+                    });
+                  },
+                  colour: selectedgender == Gender.female ? kBmiCardColor : kInactiveBmiCard,
+                  cardChild: IconContent(iconData: FontAwesomeIcons.venus, Label: 'FEMALE'),
                 ),
               ),
             ],
@@ -36,7 +70,40 @@ class _InputPageState extends State<InputPage> {
         ),
           Expanded(
             child: BmiCard(
-              colour: Color(0xFF1D1E33),
+              colour: kBmiCardColor,
+              cardChild: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('HEIGHT',style: kTextstyling,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(height.toString(), style: kNumbstyling,),
+                      Text('cm',style: kTextstyling,),
+                    ],
+                  ),
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: kBottomBarColor,
+                      inactiveTrackColor: kInactiveTrackColor,
+                      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15.0,),
+                      thumbColor: kBottomBarColor,
+                      overlayColor: Color(0x29EB1555),
+                      overlayShape: RoundSliderOverlayShape(overlayRadius: 30.0,),
+                    ),
+                    child: Slider(value: height.toDouble(),
+                        min: 120,
+                        max: 220,
+                        onChanged: (double newValue)  {
+                      setState(() {
+                        height = newValue.round();
+                      });
+                        }),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -44,37 +111,55 @@ class _InputPageState extends State<InputPage> {
               children: [
                 Expanded(
                   child: BmiCard(
-                    colour: Color(0xFF1D1E33),
+                    colour: kBmiCardColor,
                   ),
                 ),
                 Expanded(
                   child: BmiCard(
                     //BmiCard is a extracted widget created by extracting a container widget which is used repeatedly,so to use a repeated widget extract the repeated widget into a new widget to make the code tidy and DRY(Don't Repeat yourself).
-                    colour: Color(0xFF1D1E33),
+                    colour: kBmiCardColor,
                   ),
                 ),
               ],
             ),
           ),
+          Container(
+            margin: EdgeInsets.only(top: 10.0),
+            decoration: BoxDecoration(color: kBottomBarColor,borderRadius: BorderRadius.circular(15.0)),
+            width: double.infinity,
+            height: kBottomBarheight,
+          )
         ],
       ),
     );
   }
 }
 
-class BmiCard extends StatelessWidget {
-  BmiCard({required this.colour});
-  final Color colour;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-        //decoration widget is used to add radius, color, border to the container widgets
-        color: colour,
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-    );
-  }
-}
+// The below line of code are replaced by the Ternary operator, Below code is the long and old method of doing the same function.
+
+// Color maleCardColor = inactiveBmiCard;
+// Color femaleCardColor = inactiveBmiCard;
+//
+// void updateColor(Gender selectedgender){
+//   if(selectedgender == Gender.male){
+//     if(maleCardColor == inactiveBmiCard){
+//       maleCardColor = BmiCardColor;
+//       femaleCardColor = inactiveBmiCard;
+//     }
+//     else{
+//       maleCardColor = inactiveBmiCard;
+//     }
+//   }
+//   if(selectedgender == Gender.female){
+//     if(femaleCardColor == inactiveBmiCard){
+//       femaleCardColor = BmiCardColor;
+//       maleCardColor = inactiveBmiCard;
+//     }
+//     else{
+//       femaleCardColor = inactiveBmiCard;
+//     }
+//   }
+// }
+
+
