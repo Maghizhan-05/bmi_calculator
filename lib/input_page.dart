@@ -3,6 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'bmi_card.dart';
 import 'icon_content.dart';
 import 'constants.dart';
+import 'results_page.dart';
+import 'bottom_bar.dart';
+import 'round_button.dart';
+import 'calculator_brain.dart';
 
 enum Gender{
   male,
@@ -20,6 +24,8 @@ class _InputPageState extends State<InputPage> {
 
   Gender? selectedgender;
   int height = 180;
+  int weight = 60;
+  int age = 19;
 
 
   @override
@@ -112,22 +118,78 @@ class _InputPageState extends State<InputPage> {
                 Expanded(
                   child: BmiCard(
                     colour: kBmiCardColor,
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('WEIGHT',style: kTextstyling,),
+                        Text(weight.toString(), style: kNumbstyling,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RoundIconButton(icon: FontAwesomeIcons.minus,
+                            OnTap: (){
+                              setState(() {
+                                weight--;
+                              });
+                            },),
+                            SizedBox(width: 10.0,),
+                            RoundIconButton(icon: FontAwesomeIcons.plus,
+                            OnTap: (){
+                              setState(() {
+                                weight++;
+                              });
+                            },),
+                          ],
+                        )
+
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
                   child: BmiCard(
                     //BmiCard is a extracted widget created by extracting a container widget which is used repeatedly,so to use a repeated widget extract the repeated widget into a new widget to make the code tidy and DRY(Don't Repeat yourself).
                     colour: kBmiCardColor,
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('AGE',style: kTextstyling,),
+                        Text(age.toString(), style: kNumbstyling,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RoundIconButton(icon: FontAwesomeIcons.minus,
+                              OnTap: (){
+                                setState(() {
+                                  age--;
+                                });
+                              },),
+                            SizedBox(width: 10.0,),
+                            RoundIconButton(icon: FontAwesomeIcons.plus,
+                              OnTap: (){
+                                setState(() {
+                                  age++;
+                                });
+                              },),
+                          ],
+                        )
+
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 10.0),
-            decoration: BoxDecoration(color: kBottomBarColor,borderRadius: BorderRadius.circular(15.0)),
-            width: double.infinity,
-            height: kBottomBarheight,
+          BottomBar(
+            onTouch: (){
+              CalculatorBrain calc = CalculatorBrain(weight: weight, height: height);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(
+              bmiResult: calc.bmiCalculate(),
+              bmiText: calc.getResult(),
+              Interpret: calc.getInterpet())));
+            },
+            BottomLabel: 'CALCULATE',
           )
         ],
       ),
@@ -136,7 +198,10 @@ class _InputPageState extends State<InputPage> {
 }
 
 
+
+
 // The below line of code are replaced by the Ternary operator, Below code is the long and old method of doing the same function.
+//The below function is a way to find which card has been selected whether the male or female using conditionals
 
 // Color maleCardColor = inactiveBmiCard;
 // Color femaleCardColor = inactiveBmiCard;
